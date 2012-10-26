@@ -27,7 +27,9 @@ Installing on any Web Server (in a DMZ)
 -----------------
 * Make sure the web server has PHP compatibility with the necessary libraries listed at the top
 * Open up the "header.php" file in a text editor and modify the line below to point to the server where the up.time Controller (API) is installed:
+
 <code>$uptime_api_hostname = "localhost";		// up.time Controller hostname (usually localhost, but not always)</code>
+
 * Now that it's configured, just enable remote access from outside of your network so that any mobile device can connect to that system, or else it will only be available from the internal network (Wifi).
 
 That's it! The UI should now be available: Ex. http://uptime-server.company.com/mobile
