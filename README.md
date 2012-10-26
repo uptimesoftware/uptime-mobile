@@ -34,10 +34,8 @@ Installing on any Web Server (in a DMZ)
 
 That's it! The UI should now be available: Ex. http://uptime-server.company.com/mobile
 
-Samples
--------
-<img src="master/screenshots/mobile-iphone5.png" width="174px" height="360px">
-<img src="master/screenshots/mobile-galaxys3.png" width="190px" height="380px">
-<img src="master/screenshots/mobile-blackberry.png" width="200px" height="354px">
-![Alt text](/screenshots/mobile-blackberry.png "Optional title")
-![Alt text](/master/screenshots/mobile-blackberry.png "Optional title")
+Sample Screenshots
+------------------
+<img src="https://raw.github.com/joelpereira/uptime-mobile/master/screenshots/mobile-iphone5.png" width="174px" height="360px">
+<img src="https://raw.github.com/joelpereira/uptime-mobile/master/screenshots/mobile-galaxys3.png" width="190px" height="380px">
+<img src="https://raw.github.com/joelpereira/uptime-mobile/master/screenshots/mobile-blackberry.png" width="200px" height="354px">
