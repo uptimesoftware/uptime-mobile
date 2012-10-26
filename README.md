@@ -33,3 +33,9 @@ Installing on any Web Server (in a DMZ)
 * Now that it's configured, just enable remote access from outside of your network so that any mobile device can connect to that system, or else it will only be available from the internal network (Wifi).
 
 That's it! The UI should now be available: Ex. http://uptime-server.company.com/mobile
+
+Samples
+-------
+<img src="screenshots/mobile-iphone5.png" width="174px" height="360px">
+<img src="screenshots/mobile-galaxys3.png" width="190px" height="380px">
+<img src="screenshots/mobile-blackberry.png" width="200px" height="354px">
