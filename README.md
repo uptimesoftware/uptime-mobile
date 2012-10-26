@@ -39,3 +39,5 @@ Samples
 <img src="master/screenshots/mobile-iphone5.png" width="174px" height="360px">
 <img src="master/screenshots/mobile-galaxys3.png" width="190px" height="380px">
 <img src="master/screenshots/mobile-blackberry.png" width="200px" height="354px">
+![Alt text](/screenshots/mobile-blackberry.png "Optional title")
+![Alt text](/master/screenshots/mobile-blackberry.png "Optional title")
