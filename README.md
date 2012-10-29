@@ -36,6 +36,6 @@ That's it! The UI should now be available: Ex. http://uptime-server.company.com/
 
 Sample Screenshots
 ------------------
-<img src="https://raw.github.com/joelpereira/uptime-mobile/master/screenshots/mobile-iphone5.png" width="174px" height="360px">
-<img src="https://raw.github.com/joelpereira/uptime-mobile/master/screenshots/mobile-galaxys3.png" width="190px" height="380px">
-<img src="https://raw.github.com/joelpereira/uptime-mobile/master/screenshots/mobile-blackberry.png" width="200px" height="354px">
+<img src="https://raw.github.com/uptimesoftware/uptime-mobile/master/screenshots/mobile-iphone5.png" width="174px" height="360px">
+<img src="https://raw.github.com/uptimesoftware/uptime-mobile/master/screenshots/mobile-galaxys3.png" width="190px" height="380px">
+<img src="https://raw.github.com/uptimesoftware/uptime-mobile/master/screenshots/mobile-blackberry.png" width="200px" height="354px">
