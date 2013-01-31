@@ -17,6 +17,10 @@ $cur_group = $uptime_api->getGroups("id={$cur_group_id}");
 
 //print_r($cur_group);	// debug
 
+// if there's no group, let's just get the default group (limited user)
+if (count($cur_group) == 0) {
+	$cur_group = $uptime_api->getGroups();
+}
 
 // get the group name (Ex. "My Infrastructure") and a few other variables
 $cur_group_name = $cur_group[0]['name'];
