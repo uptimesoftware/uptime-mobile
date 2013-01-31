@@ -26,7 +26,7 @@ function MainMenuSubmit() {
 
 <div id="mainMenu" align="right">
 	<form id="mainMenu" method="GET">
-	<img src="images/uptime_logo.png" align="left"/>
+	<img src="images/uptime_logo.png" align="left" border="0px"/>
 	Menu:
 	<select id="menuOption" name="mainMenu" onChange="MainMenuSubmit();">
 		<option value="0">GlobalScan</option>
@@ -44,7 +44,8 @@ function MainMenuSubmit() {
 {/if}
 {$cur_group_name}
 {if count($sub_groups) > 0}
--&gt;
+<br/>
+Groups:
 <select name="sg" onChange="form.submit();">
 	<option value="{$cur_group_id}"></option>
 {foreach from=$sub_groups item=sub_group}
@@ -64,6 +65,25 @@ function MainMenuSubmit() {
 	</table>
 
 	{foreach from=$elements item=element}
+		{assign var="cols" value="0"}
+		{if ($element['total_ok'])}
+			{assign var="cols" value="`$cols+1`"}
+		{/if}
+		{if ($element['total_warn'])}
+			{assign var="cols" value="`$cols+1`"}
+		{/if}
+		{if ($element['total_crit'])}
+			{assign var="cols" value="`$cols+1`"}
+		{/if}
+		{if ($element['total_maint'])}
+			{assign var="cols" value="`$cols+1`"}
+		{/if}
+		{if ($element['total_unknown'])}
+			{assign var="cols" value="`$cols+1`"}
+		{/if}
+		{if ($cols == 0)}
+			{assign var="cols" value="1"}
+		{/if}
 	<table border="1" cellspacing="0" cellpadding="0">
 		<tr>
 			<td colspan="5" class="{$element['status']|lower}">
@@ -75,20 +95,6 @@ function MainMenuSubmit() {
 			</td>
 		</tr>
 		<tr>
-			<td class="crit" width="20%">
-				<a href="element.php?e={$element['id']}" style="color:white">
-					<div class="tdLink">
-						{$element['total_crit']}
-					</div>
-				</a>
-			</td>
-			<td class="warn" width="20%">
-				<a href="element.php?e={$element['id']}" style="color:black">
-					<div class="tdLink">
-						{$element['total_warn']}
-					</div>
-				</a>
-			</td>
 			<td class="ok" width="20%">
 				<a href="element.php?e={$element['id']}" style="color:white">
 					<div class="tdLink">
@@ -96,6 +102,25 @@ function MainMenuSubmit() {
 					</div>
 				</a>
 			</td>
+			{if $element['total_warn'] > 0}
+			<td class="warn" width="20%">
+				<a href="element.php?e={$element['id']}" style="color:black">
+					<div class="tdLink">
+						{$element['total_warn']}
+					</div>
+				</a>
+			</td>
+			{/if}
+			{if $element['total_crit'] > 0}
+			<td class="crit" width="20%">
+				<a href="element.php?e={$element['id']}" style="color:white">
+					<div class="tdLink">
+						{$element['total_crit']}
+					</div>
+				</a>
+			</td>
+			{/if}
+			{if $element['total_maint'] > 0}
 			<td class="maint" width="20%">
 				<a href="element.php?e={$element['id']}" style="color:white">
 					<div class="tdLink">
@@ -103,6 +128,8 @@ function MainMenuSubmit() {
 					</div>
 				</a>
 			</td>
+			{/if}
+			{if $element['total_unknown'] > 0}
 			<td class="unknown" width="20%">
 				<a href="element.php?e={$element['id']}" style="color:black">
 					<div class="tdLink">
@@ -110,6 +137,7 @@ function MainMenuSubmit() {
 					</div>
 				</a>
 			</td>
+			{/if}
 		</tr>
 	</table>
 	<br/>

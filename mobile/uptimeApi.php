@@ -211,7 +211,7 @@ class uptimeApi {
 		// Return the output
 		return $output;
 	}
-	public function getAllMonitorStatus ( $filter = "", &$error = "" ) {
+	public function getAllMonitorStatusOriginal ( $filter = "", &$error = "" ) {
 		// return status for either all of the monitors, or the monitor provided by the ID, or all monitors with some filter applied
 		$output = array();
 		
@@ -239,6 +239,55 @@ class uptimeApi {
 		$this->addLengthOfOutages($output);
 		// sort monitors appropriately
 		$output = $this->sortMonitors($output);
+		// Return the output
+		return $output;
+	}
+	public function getAllMonitorStatus ( $filter = "", &$error = "" ) {
+		// return status for either all of the monitors, or the monitor provided by the ID, or all monitors with some filter applied
+		$output = array();
+		// multiple sessions
+		$allSessions = array();
+		
+		// get all the elements
+		$allElements = $this->getElements();
+		// now let's get the element status for each one and add it to the elements array
+		foreach ($allElements as &$element) {
+			// get element status for each element (better than getting status for each monitor!)
+			$curApiRequest = "/{$this->apiVersion}/elements/{$element['id']}/status";
+			// get session
+			$session = $this->getSession($curApiRequest);
+			// add the session to the sessions array
+			array_push($allSessions, $session);
+			unset($session);
+		}
+		
+		// clear out some of the memory before filling it too much
+		unset($allElements);
+		
+		// get all the API outputs at once (element statuses)
+		$elementStatuses = $this->getMultiJSON($allSessions, false, true);
+		
+		// go through each element status
+		foreach ($elementStatuses as &$elementStatus) {
+			// get the list of monitors for each element
+			$monitorsStatus = &$elementStatus['monitorStatus'];
+			// for each monitor, add it to the array
+			if (count($monitorsStatus) > 0) {
+				foreach ($monitorsStatus as &$monitor) {
+					array_push($output, $monitor);
+					// clear out some memory
+					unset($monitor);
+				}
+			}
+		}
+		
+		// apply filter before sorting
+		$output = $this->runFilter($output, $filter);
+		// calculate and add the length of time the monitors have been in their current state (lastTransitionTime)
+		$this->addLengthOfOutages($output);
+		// sort monitors appropriately
+		$output = $this->sortMonitors($output);
+		
 		// Return the output
 		return $output;
 	}
@@ -434,6 +483,101 @@ class uptimeApi {
 		// return parsed json output
 		return $output;
 	}
+	
+	// Setup a session for a multi-curl call (for multiple quick API calls)
+	public function getSession( $apiRequest ) {
+		// initialize our curl session
+		$session = curl_init();
+		$proto = "https";
+		if ( ! $this->apiSSL ) { $proto = "http"; }
+		curl_setopt($session, CURLOPT_URL, "{$proto}://{$this->apiHostname}:{$this->apiPort}/api{$apiRequest}" );
+		// no need for authentication if we're just getting the API info
+		if ( strlen($apiRequest) > 0) {
+			curl_setopt($session, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+			curl_setopt($session, CURLOPT_USERPWD, "{$this->apiUsername}:{$this->apiPassword}" );
+		}
+		// store the page contents
+		curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
+		// get around any SSL certificate restrictions
+		// if SSL certificate is valid and purchased, change these to "true"
+		if ( $this->apiSSL ) {	// SSL
+			curl_setopt($session, CURLOPT_SSL_VERIFYHOST, false);
+			curl_setopt($session, CURLOPT_SSL_VERIFYPEER, false);
+		}		
+		// return the session
+		return $session;
+	}
+
+	// Make the call to the up.time API via JSON
+	public function getMultiJSON( &$allSessionsArray, $dieOnError = false, $autoDecodeJSON = true ) {
+		// clear error string
+		//$error = "";
+		
+		// array that will hold all the outputs
+		$allOutputs = array();
+
+		// create multi-curl object
+		$multi_session = curl_multi_init();
+		
+		foreach ($allSessionsArray as $session) {
+			curl_multi_add_handle($multi_session, $session);
+		}
+		
+		// execute all queries simultaneously, and continue when all are complete
+		$running = null;
+		do {
+			curl_multi_exec($multi_session, $running);
+		} while ($running);
+		
+		foreach ($allSessionsArray as $session) {
+			// fetch our API request(s) output
+			$output = curl_multi_getcontent($session);
+			/*
+			// get HTTP result status (including HTTP code)
+			$resultStatus = curl_getinfo($session);                                   
+			// check for errors
+			if (curl_error($session)) {
+				// CURL error
+				if ($dieOnError) {
+					die( "Error Fetching Data => ".curl_error($session) );
+				}
+				else {
+					// return error instead
+					$error = curl_error($session);
+				}
+			}
+			// check for HTTP/authentication errors
+			elseif($resultStatus['http_code'] == 200) {
+				// all good, so do nothing
+			}
+			else {
+				// HTTP error (usually due to authentication)
+				$err_code = $resultStatus['http_code'];
+				if ($err_code == 401) {
+					$error = "HTTP error {$err_code}: Unauthorized";
+				}
+				elseif ($err_code == 404) {
+					$error = "HTTP error {$err_code}: Not Found";
+				}
+				else {
+					$error = "HTTP error {$err_code}";
+				}
+			}
+			curl_close($session);
+			*/
+			
+			if ($autoDecodeJSON) {
+				// parse json objects into array
+				$output = json_decode ( $output, true );
+			}
+
+			// store parsed json output
+			array_push($allOutputs, $output);
+		}
+		
+		return $allOutputs;
+	}
+
 	// Read filter string and put it into an array
 	// The valid filter string format is: "var1=x&var2=y"
 	// It will trim away extra spaces properly
